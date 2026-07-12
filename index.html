@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GNN-MIP Nearshoring Siting Simulator - Ciudad Juárez</title>
+  
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg-dark: #090a0f;
+      --panel-bg: rgba(17, 18, 27, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --primary: #10b981; /* Emerald green */
+      --primary-glow: rgba(16, 185, 129, 0.3);
+      --accent-yellow: #f59e0b; /* Amber */
+      --accent-blue: #3b82f6; /* Blue */
+      --danger: #ef4444; /* Red */
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --font-display: 'Plus Jakarta Sans', sans-serif;
+      --font-body: 'Outfit', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* Main Dashboard Layout */
+    .dashboard {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* Left Sidebar: Controls & Metrics */
+    .sidebar {
+      width: 38%;
+      background-color: rgba(11, 12, 19, 0.95);
+      border-right: 1px solid var(--glass-border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+      z-index: 10;
+      box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+    }
+
+    header h1 {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 30%, #a7f3d0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    header p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Model Selection Buttons */
+    .control-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .panel-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    .model-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+    }
+
+    .model-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 10px 4px;
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: center;
+    }
+
+    .model-btn:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .model-btn.active {
+      color: #000;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(255,255,255,0.15);
+      font-weight: 700;
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .kpi-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .kpi-card .icon-wrapper {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 18px;
+      opacity: 0.6;
+    }
+
+    .kpi-card.warning .icon-wrapper,
+    .kpi-card.warning .value {
+      color: var(--danger);
+    }
+    
+    .kpi-card.warning {
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+
+    .kpi-card.glow {
+      box-shadow: 0 0 15px var(--primary-glow);
+      border-color: var(--primary);
+    }
+
+    .kpi-card .label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .kpi-card .value {
+      font-size: 20px;
+      font-weight: 700;
+      font-family: var(--font-display);
+    }
+
+    .kpi-card .unit {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-left: 2px;
+      font-weight: 400;
+    }
+
+    /* Alerts area */
+    .warnings-panel {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: none;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .warnings-panel.active {
+      display: flex;
+      animation: pulseWarning 2s infinite;
+    }
+
+    @keyframes pulseWarning {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+      70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    .warnings-panel i {
+      color: var(--danger);
+      font-size: 20px;
+    }
+
+    .warnings-text h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #ff8080;
+    }
+
+    .warnings-text p {
+      font-size: 11px;
+      color: #ffb3b3;
+      margin-top: 1px;
+    }
+
+    /* Charts Panel */
+    .chart-container {
+      background: var(--panel-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 20px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chart-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      height: 150px;
+    }
+
+    /* Map View on Right */
+    .map-container {
+      flex-grow: 1;
+      width: 62%;
+      height: 100vh;
+      position: relative;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      background-color: #0b0c10;
+    }
+
+    /* Map Legend Overlay */
+    .map-legend {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(11, 12, 19, 0.9);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 16px 20px;
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .legend-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text-main);
+    }
+
+    .legend-icon {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Custom Leaflet Tooltips & Popups */
+    .leaflet-popup-content-wrapper {
+      background: #11121b !important;
+      color: #fff !important;
+      border: 1px solid var(--glass-border);
+      border-radius: 12px !important;
+      font-family: var(--font-body);
+      padding: 4px;
+    }
+
+    .leaflet-popup-tip {
+      background: #11121b !important;
+      border: 1px solid var(--glass-border);
+    }
+
+    .popup-title {
+      font-weight: 700;
+      font-size: 14px;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+      font-family: var(--font-display);
+      color: #fff;
+    }
+
+    .popup-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .popup-row .p-val {
+      font-weight: 600;
+    }
+
+    .popup-badge {
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .popup-badge.heavy { background-color: rgba(239, 68, 68, 0.2); color: #ff8080; }
+    .popup-badge.logistics { background-color: rgba(59, 130, 246, 0.2); color: #80b3ff; }
+    .popup-badge.light { background-color: rgba(16, 185, 129, 0.2); color: #80ffbf; }
+
+    /* Custom Map Markers (DivIcons) */
+    .marker-pin {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      color: #fff;
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <header>
+        <h1>Siting GNN-MIP</h1>
+        <p>Simulador híbrido espacio-temporal de optimización de localización industrial en Ciudad Juárez.</p>
+      </header>
+
+      <!-- MODEL SELECTOR -->
+      <div class="control-panel">
+        <div class="panel-label">Modelo Activo</div>
+        <div class="model-selector">
+          <button class="model-btn active" onclick="selectModel('gnn')" id="btn-gnn">GNN-MIP</button>
+          <button class="model-btn" onclick="selectModel('abs')" id="btn-abs">MILP Abs.</button>
+          <button class="model-btn" onclick="selectModel('ahp')" id="btn-ahp">GIS-AHP</button>
+        </div>
+      </div>
+
+      <!-- WARNING ALERTS -->
+      <div class="warnings-panel" id="warnings-card">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <div class="warnings-text">
+          <h4 id="warning-title">Violaciones de Restricciones</h4>
+          <p id="warning-desc">El modelo actual tiene sobrecargas y violaciones de riesgos.</p>
+        </div>
+      </div>
+
+      <!-- KPI METRICS GRID -->
+      <div class="control-panel">
+        <div class="panel-label">Métricas de la Simulación</div>
+        <div class="kpi-grid">
+          <div class="kpi-card glow" id="card-cfe">
+            <div class="icon-wrapper" style="color: var(--accent-yellow);"><i class="fa-solid fa-bolt"></i></div>
+            <div class="label">Extensión CFE</div>
+            <div class="value"><span id="val-cfe">--</span><span class="unit">km</span></div>
+          </div>
+          <div class="kpi-card" id="card-jmas">
+            <div class="icon-wrapper" style="color: var(--accent-blue);"><i class="fa-solid fa-faucet-drip"></i></div>
+            <div class="label">Extensión JMAS</div>
+            <div class="value"><span id="val-jmas">--</span><span class="unit">km</span></div>
+          </div>
+          <div class="kpi-card" id="card-commute">
+            <div class="icon-wrapper" style="color: var(--primary);"><i class="fa-solid fa-road"></i></div>
+            <div class="label">Viaje Promedio</div>
+            <div class="value"><span id="val-commute">--</span><span class="unit">min</span></div>
+          </div>
+          <div class="kpi-card" id="card-overloads">
+            <div class="icon-wrapper"><i class="fa-solid fa-plug-circle-exclamation"></i></div>
+            <div class="label">Sobrecarga CFE</div>
+            <div class="value"><span id="val-overloads">--</span><span class="unit">nodos</span></div>
+          </div>
+          <div class="kpi-card" id="card-hazards">
+            <div class="icon-wrapper"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <div class="label">Riesgos Geológicos</div>
+            <div class="value"><span id="val-hazards">--</span><span class="unit">predios</span></div>
+          </div>
+          <div class="kpi-card" id="card-water">
+            <div class="icon-wrapper"><i class="fa-solid fa-droplet-slash"></i></div>
+            <div class="label">Violación de Agua</div>
+            <div class="value"><span id="val-water">--</span><span class="unit">predios</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHARTS -->
+      <div class="chart-container">
+        <div class="chart-title">
+          <span>Comparativa de Costo de Extensión</span>
+          <span style="font-size: 10px; color: var(--primary); font-weight: 600;"><i class="fa-solid fa-circle-arrow-down"></i> GNN-MIP Ahorra ~10%</span>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="metricsChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAP CONTAINER -->
+    <div class="map-container">
+      <div id="map"></div>
+      
+      <!-- MAP LEGEND -->
+      <div class="map-legend">
+        <div class="legend-title">Simbología</div>
+        <div class="legend-item">
+          <div class="legend-icon" style="color: #990000; font-size: 18px;"><i class="fa-solid fa-square-xmark"></i></div>
+          <span>Cruces Fronterizos (Puentes)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-icon" style="color: var(--accent-yellow); font-size: 14px;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <span>Subestaciones Eléctricas CFE</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-icon" style="color: var(--accent-blue); font-size: 12px;"><i class="fa-solid fa-circle"></i></div>
+          <span>Colectores de Drenaje JMAS</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-icon"><div style="background-color: var(--primary); width:12px; height:12px; border-radius:50%; border:2px solid #fff;"></div></div>
+          <span>Predio Asignado (Correcto)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-icon"><div style="background-color: var(--danger); width:12px; height:12px; border-radius:50%; border:2px solid #fff;"></div></div>
+          <span>Predio Asignado (Con Riesgos/Violación)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-icon"><div style="background-color: rgba(255,255,255,0.15); width:12px; height:12px; border-radius:50%; border:2px solid #555;"></div></div>
+          <span>Predios Vacantes No Seleccionados</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Loaded Data from Simulation -->
+  <script src="dashboard_data.js"></script>
+  
+  <script>
+    let map;
+    let markersLayer = L.layerGroup();
+    let linesLayer = L.layerGroup();
+    let currentModel = 'gnn';
+    let chart;
+    
+    // Snapped Map Center for Ciudad Juarez
+    const juarezCenter = [31.685, -106.42];
+
+    window.onload = function() {
+      // 1. Initialize Map
+      map = L.map('map', {
+        center: juarezCenter,
+        zoom: 12,
+        zoomControl: false
+      });
+      
+      L.control.zoom({ position: 'topright' }).addTo(map);
+
+      // Dark theme map tiles (CartoDB Dark Matter)
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 20
+      }).addTo(map);
+
+      markersLayer.addTo(map);
+      linesLayer.addTo(map);
+
+      // 2. Initialize Charts
+      initChart();
+
+      // 3. Render initial model (GNN-MIP)
+      renderModel(currentModel);
+    };
+
+    function initChart() {
+      const ctx = document.getElementById('metricsChart').getContext('2d');
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['CFE Extensión (km)', 'JMAS Extensión (km)'],
+          datasets: [
+            {
+              label: 'GIS-AHP',
+              data: [dashboardData.metrics.ahp.cfe_ext / 1000.0, dashboardData.metrics.ahp.jmas_ext / 1000.0],
+              backgroundColor: '#ff6666',
+              borderWidth: 0,
+              borderRadius: 6
+            },
+            {
+              label: 'Abstract MILP',
+              data: [dashboardData.metrics.abs.cfe_ext / 1000.0, dashboardData.metrics.abs.jmas_ext / 1000.0],
+              backgroundColor: '#ffb266',
+              borderWidth: 0,
+              borderRadius: 6
+            },
+            {
+              label: 'GNN-MIP (Propuesto)',
+              data: [dashboardData.metrics.gnn.cfe_ext / 1000.0, dashboardData.metrics.gnn.jmas_ext / 1000.0],
+              backgroundColor: '#10b981',
+              borderWidth: 0,
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: {
+                color: '#9ca3af',
+                font: { size: 10, family: 'Outfit' },
+                boxWidth: 10
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { color: '#9ca3af', font: { size: 11, family: 'Outfit' } }
+            },
+            y: {
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#9ca3af', font: { size: 10, family: 'Outfit' } }
+            }
+          }
+        }
+      });
+    }
+
+    function selectModel(modelType) {
+      // Toggle active classes on buttons
+      document.querySelectorAll('.model-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('btn-' + modelType).classList.add('active');
+      
+      currentModel = modelType;
+      renderModel(modelType);
+    }
+
+    function animateValue(obj, start, end, duration, decimal = 0) {
+      if (start === end) return;
+      let range = end - start;
+      let current = start;
+      let increment = end > start ? 1 : -1;
+      let stepTime = Math.abs(Math.floor(duration / (range === 0 ? 1 : range)));
+      if (stepTime < 10) stepTime = 10;
+      
+      let timer = setInterval(function() {
+        current += (range / (duration / 16));
+        if ((range > 0 && current >= end) || (range < 0 && current <= end)) {
+          clearInterval(timer);
+          obj.innerHTML = end.toFixed(decimal);
+        } else {
+          obj.innerHTML = current.toFixed(decimal);
+        }
+      }, 16);
+    }
+
+    function renderModel(modelKey) {
+      const metrics = dashboardData.metrics[modelKey];
+      const alloc = dashboardData.allocations[modelKey];
+      
+      // 1. Update KPI numbers with animation
+      const cfeVal = document.getElementById('val-cfe');
+      const jmasVal = document.getElementById('val-jmas');
+      const commuteVal = document.getElementById('val-commute');
+      const overloadsVal = document.getElementById('val-overloads');
+      const hazardsVal = document.getElementById('val-hazards');
+      const waterVal = document.getElementById('val-water');
+      
+      // CFE, JMAS are in meters in metrics, we show km
+      cfeVal.innerHTML = (metrics.cfe_ext / 1000.0).toFixed(1);
+      jmasVal.innerHTML = (metrics.jmas_ext / 1000.0).toFixed(1);
+      commuteVal.innerHTML = metrics.avg_commute.toFixed(1);
+      overloadsVal.innerHTML = metrics.overloads;
+      hazardsVal.innerHTML = metrics.hazards;
+      waterVal.innerHTML = metrics.water;
+      
+      // Update color coding on cards for overloads/violations
+      const cardCFE = document.getElementById('card-cfe');
+      const cardOverloads = document.getElementById('card-overloads');
+      const cardHazards = document.getElementById('card-hazards');
+      const cardWater = document.getElementById('card-water');
+      
+      if (metrics.overloads > 0) {
+        cardOverloads.classList.add('warning');
+      } else {
+        cardOverloads.classList.remove('warning');
+      }
+      
+      if (metrics.hazards > 0) {
+        cardHazards.classList.add('warning');
+      } else {
+        cardHazards.classList.remove('warning');
+      }
+      
+      if (metrics.water > 0) {
+        cardWater.classList.add('warning');
+      } else {
+        cardWater.classList.remove('warning');
+      }
+      
+      // 2. Set Warning Panel
+      const warnCard = document.getElementById('warnings-card');
+      const warnTitle = document.getElementById('warning-title');
+      const warnDesc = document.getElementById('warning-desc');
+      
+      if (metrics.overloads > 0 || metrics.hazards > 0 || metrics.water > 0) {
+        warnCard.classList.add('active');
+        let issues = [];
+        if (metrics.overloads > 0) issues.push(`${metrics.overloads} subestación sobrecargada`);
+        if (metrics.hazards > 0) issues.push(`${metrics.hazards} predios en zonas de riesgo`);
+        if (metrics.water > 0) issues.push(`${metrics.water} violaciones de estrés hídrico`);
+        
+        warnTitle.innerHTML = "Violaciones del Modelo";
+        warnDesc.innerHTML = "Problemas detectados: " + issues.join(", ");
+      } else {
+        warnCard.classList.remove('active');
+      }
+
+      // 3. Render Map Layers
+      markersLayer.clearLayers();
+      linesLayer.clearLayers();
+      
+      // Add Ports of Entry (Bridges)
+      dashboardData.bridges.forEach(b => {
+        const bridgeIcon = L.divIcon({
+          className: 'custom-icon',
+          html: `<div style="color: #ef4444; font-size: 24px; text-shadow: 0 0 10px rgba(0,0,0,0.8);"><i class="fa-solid fa-square-xmark"></i></div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+        
+        L.marker([b.lat, b.lon], { icon: bridgeIcon }).addTo(markersLayer)
+          .bindPopup(`<div class="popup-title">Puente Internacional ${b.name}</div><div class="popup-row"><span>Factor Congestión</span><span class="p-val">${b.factor}x</span></div>`);
+      });
+      
+      // Add CFE Substations
+      dashboardData.cfe_substations.forEach(s => {
+        const cfeIcon = L.divIcon({
+          className: 'custom-icon',
+          html: `<div style="color: var(--accent-yellow); font-size: 20px; text-shadow: 0 0 8px rgba(0,0,0,0.8);"><i class="fa-solid fa-triangle-exclamation"></i></div>`,
+          iconSize: [20, 20],
+          iconAnchor: [10, 10]
+        });
+        
+        L.marker([s.lat, s.lon], { icon: cfeIcon }).addTo(markersLayer)
+          .bindPopup(`<div class="popup-title">Subestación CFE ${s.name}</div><div class="popup-row"><span>Capacidad Límite</span><span class="p-val">${s.capacity} KVA</span></div>`);
+      });
+      
+      // Add JMAS Outlets
+      dashboardData.jmas_outlets.forEach(o => {
+        const jmasIcon = L.divIcon({
+          className: 'custom-icon',
+          html: `<div style="color: var(--accent-blue); font-size: 16px; text-shadow: 0 0 6px rgba(0,0,0,0.8);"><i class="fa-solid fa-circle"></i></div>`,
+          iconSize: [16, 16],
+          iconAnchor: [8, 8]
+        });
+        
+        L.marker([o.lat, o.lon], { icon: jmasIcon }).addTo(markersLayer)
+          .bindPopup(`<div class="popup-title">Colector JMAS ${o.name}</div>`);
+      });
+      
+      // Build Lookup mapping of project -> allocated plot ID
+      const plotToProject = {};
+      const allocatedPlotIds = new Set();
+      for (const [projId, plotId] of Object.entries(alloc)) {
+        plotToProject[plotId] = dashboardData.projects.find(p => p.id == projId);
+        allocatedPlotIds.add(plotId);
+      }
+      
+      // Add Plots
+      dashboardData.plots.forEach(plot => {
+        const isAllocated = allocatedPlotIds.has(plot.id);
+        let color = 'rgba(255,255,255,0.15)';
+        let size = 10;
+        let border = '1px solid #555';
+        let popupContent = "";
+        
+        if (isAllocated) {
+          const proj = plotToProject[plot.id];
+          size = 14;
+          border = '2px solid #fff';
+          
+          // Violations checks for coloring
+          let hasViolation = false;
+          if (plot.fault_hazard == 1 || plot.flood_hazard == 1) hasViolation = true;
+          if (proj.heavy_water && plot.water_stress >= 3) hasViolation = true;
+          
+          color = hasViolation ? 'var(--danger)' : 'var(--primary)';
+          
+          const profileBadge = proj.name.split("_")[0].toLowerCase();
+          
+          popupContent = `
+            <div class="popup-title">Predio Vacante #${plot.id}</div>
+            <div class="popup-row"><span>Zona Siting</span><span class="p-val">${plot.zone}</span></div>
+            <div class="popup-row"><span>Precio Suelo</span><span class="p-val">$${plot.price.toLocaleString(undefined, {maximumFractionDigits:0})} USD</span></div>
+            <div style="margin: 8px 0; border-top: 1px dashed var(--glass-border); padding-top: 8px;">
+              <div class="popup-row"><span>Asignado a Proyecto</span><span class="popup-badge ${profileBadge}">${proj.name}</span></div>
+              <div class="popup-row"><span>Demanda CFE</span><span class="p-val">${proj.load} KVA</span></div>
+            </div>
+            <div style="border-top: 1px solid var(--glass-border); margin-top: 8px; padding-top: 8px; font-size: 10px;">
+              <div class="popup-row"><span>Falla Geológica</span><span class="p-val" style="color:${plot.fault_hazard ? 'var(--danger)' : '#80ff80'}">${plot.fault_hazard ? 'SÍ' : 'NO'}</span></div>
+              <div class="popup-row"><span>Zona Inundable</span><span class="p-val" style="color:${plot.flood_hazard ? 'var(--danger)' : '#80ff80'}">${plot.flood_hazard ? 'SÍ' : 'NO'}</span></div>
+              <div class="popup-row"><span>Estrés Acuífero</span><span class="p-val">${plot.water_stress}/4</span></div>
+            </div>
+          `;
+          
+          // Draw connecting linkage lines to closest CFE and JMAS
+          // Find CFE Substation based on allocation rules of the specific model
+          let assignedCfe;
+          if (modelKey === 'abs') {
+            // Abstract MILP solves based on Euclidean distance
+            assignedCfe = dashboardData.cfe_substations.reduce((min, c) => {
+              const d = Math.hypot(plot.lat - c.lat, plot.lon - c.lon);
+              return d < min.d ? {c, d} : min;
+            }, {d: Infinity}).c;
+          } else {
+            // GNN-MIP and AHP connect to closest spatial node in UTM zone
+            // We use the nearest coordinate
+            assignedCfe = dashboardData.cfe_substations.find(c => c.name === plot.zone);
+          }
+          
+          const assignedJmas = dashboardData.jmas_outlets.find(o => o.name === plot.zone);
+          
+          if (assignedCfe) {
+            L.polyline([[plot.lat, plot.lon], [assignedCfe.lat, assignedCfe.lon]], {
+              color: 'var(--accent-yellow)',
+              weight: 2,
+              opacity: 0.65,
+              dashArray: '4, 4'
+            }).addTo(linesLayer);
+          }
+          
+          if (assignedJmas) {
+            L.polyline([[plot.lat, plot.lon], [assignedJmas.lat, assignedJmas.lon]], {
+              color: 'var(--accent-blue)',
+              weight: 2,
+              opacity: 0.65,
+              dashArray: '2, 5'
+            }).addTo(linesLayer);
+          }
+        } else {
+          // Unallocated plot popup
+          popupContent = `
+            <div class="popup-title">Predio Vacante #${plot.id}</div>
+            <div class="popup-row"><span>Zona Siting</span><span class="p-val">${plot.zone}</span></div>
+            <div class="popup-row"><span>Precio Suelo</span><span class="p-val">$${plot.price.toLocaleString(undefined, {maximumFractionDigits:0})} USD</span></div>
+            <div class="popup-row"><span>Falla Geológica</span><span class="p-val">${plot.fault_hazard ? 'SÍ' : 'NO'}</span></div>
+            <div class="popup-row"><span>Zona Inundable</span><span class="p-val">${plot.flood_hazard ? 'SÍ' : 'NO'}</span></div>
+            <div class="popup-row"><span>Estrés Acuífero</span><span class="p-val">${plot.water_stress}/4</span></div>
+          `;
+        }
+        
+        const plotIcon = L.divIcon({
+          className: 'custom-icon',
+          html: `<div style="background-color: ${color}; width: ${size}px; height: ${size}px; border-radius: 50%; border: ${border}; box-shadow: 0 0 8px ${color}"></div>`,
+          iconSize: [size, size],
+          iconAnchor: [size/2, size/2]
+        });
+        
+        L.marker([plot.lat, plot.lon], { icon: plotIcon }).addTo(markersLayer)
+          .bindPopup(popupContent);
+      });
+      
+      // Auto-fit bounds for the map to fit all nodes nicely
+      const allLats = dashboardData.plots.map(p => p.lat);
+      const allLons = dashboardData.plots.map(p => p.lon);
+      const minLat = Math.min(...allLats);
+      const maxLat = Math.max(...allLats);
+      const minLon = Math.min(...allLons);
+      const maxLon = Math.max(...allLons);
+      map.fitBounds([[minLat, minLon], [maxLat, maxLon]], { padding: [40, 40] });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+# Python temporary files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Large PDF documents (should be referenced or downloaded separately)
+*.pdf
+*.docx
+*.docm
+*.tmp
+
+# Operating system files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# IDE configuration files
+.idea/
+.vscode/
+
+# Local server configurations
+.env
+venv/
+.venv/
+env/
