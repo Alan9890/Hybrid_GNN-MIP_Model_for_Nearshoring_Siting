@@ -39,7 +39,7 @@ The simulation compares our proposed **GNN-MIP** model against two baseline para
 
 The pipeline generates the comparison figure (`siting-comparison.png`) illustrating the spatial allocation topology and metric improvements:
 
-![Siting Comparison](siting-comparison.png)
+![Siting Comparison](Resultados/siting-comparison.png)
 
 ---
 

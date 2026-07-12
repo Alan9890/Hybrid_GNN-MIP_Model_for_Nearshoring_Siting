@@ -21,8 +21,11 @@ def main():
     t_start = time.time()
     
     datos_dir = r"c:\Users\alann\Desktop\MIAAD\MICAI_2026\POC_SIMULATION\Datos"
-    output_csv = r"c:\Users\alann\Desktop\MIAAD\MICAI_2026\POC_SIMULATION\siting-results.csv"
-    output_png = r"c:\Users\alann\Desktop\MIAAD\MICAI_2026\POC_SIMULATION\siting-comparison.png"
+    resultados_dir = r"c:\Users\alann\Desktop\MIAAD\MICAI_2026\POC_SIMULATION\Resultados"
+    os.makedirs(resultados_dir, exist_ok=True)
+    
+    output_csv = os.path.join(resultados_dir, "siting-results.csv")
+    output_png = os.path.join(resultados_dir, "siting-comparison.png")
     output_js = r"c:\Users\alann\Desktop\MIAAD\MICAI_2026\POC_SIMULATION\dashboard_data.js"
     
     # Initialize Coordinate Transformer from UTM Zone 13N (EPSG:32613) to Lat/Lon (EPSG:4326)
@@ -106,7 +109,7 @@ def main():
     # 4. DEFINE ZONES AND INFRASTRUCTURE NODES (UTM EPSG:32613)
     print("\n[Step 4/9] Defining municipal planning zones and infrastructure nodes...")
     
-    # Zone Centers - Adjusted San Jeronimo center closer to the actual border road network
+    # Zone Centers
     zones = {
         "San Jeronimo": {"center": (340000.0, 3512000.0), "color": "purple"},
         "Norte Centro": {"center": (357500.0, 3509500.0), "color": "blue"},
@@ -161,7 +164,7 @@ def main():
         zone_nodes = []
         for n in G_main.nodes():
             dist = np.sqrt((n[0] - cx)**2 + (n[1] - cy)**2)
-            if dist < 4500.0: # Expanded search radius to find real road nodes
+            if dist < 4500.0:
                 zone_nodes.append(n)
                 
         if len(zone_nodes) < 10:
@@ -611,7 +614,7 @@ def main():
     ax_map.set_facecolor('#fdfdfd')
     ax_map.grid(True, linestyle='--', color='#e0e0e0', zorder=1)
     
-    # Adjusted San Jeronimo box coordinates to match where nodes actually exist near the bridge
+    # Adjusted San Jeronimo box coordinates
     zone_rects = {
         "San Jerónimo": (337000, 3504000, 6000, 13000),
         "Norte Centro": (356000, 3506000, 3000, 5000),
@@ -626,7 +629,7 @@ def main():
         ax_map.add_patch(rect_patch)
         ax_map.text(x + w/2, y + h/6, zlabel, color='#888888', fontsize=12, fontweight='bold', ha='center', va='center', zorder=3)
         
-    # Draw GNN-MIP utility connection lines on the static map to make it look premium
+    # Draw GNN-MIP utility connection lines
     for p_id, j_id in allocation_gnn.items():
         plot = candidate_plots[j_id]
         px, py = plot["coords"]
@@ -667,7 +670,6 @@ def main():
     ax_map.set_xlabel("UTM Easting (m)", fontsize=12)
     ax_map.set_ylabel("UTM Northing (m)", fontsize=12)
     ax_map.set_xlim(335000, 372000)
-    # Expanded Y limits to cover the Santa Teresa bridge and its plots
     ax_map.set_ylim(3488000, 3518000)
     ax_map.legend(loc='lower left', frameon=True, facecolor='white', edgecolor='#e0e0e0', fontsize=10)
     
