@@ -1,0 +1,32 @@
+random_seed: 42
+
+spatial:
+  target_crs: "EPSG:32613"
+
+paths:
+  data_dir: "Datos"
+  legacy_results_dir: "Resultados"
+  outputs_dir: "outputs"
+
+scenario_status:
+  candidate_plots: "synthetic"
+  cfe_substations: "synthetic_assumption"
+  jmas_outlets: "synthetic_assumption"
+  hazards: "synthetic_assumption"
+  traffic: "synthetic_bridge_factors_not_stgnn"
+
+optimization:
+  solver: "CBC"
+  alpha_cfe_distance: 1.0
+  beta_jmas_distance: 1.0
+  gamma_bridge_travel: 2.0
+
+sensitivity:
+  variations:
+    - -0.30
+    - -0.20
+    - -0.10
+    - 0.00
+    - 0.10
+    - 0.20
+    - 0.30

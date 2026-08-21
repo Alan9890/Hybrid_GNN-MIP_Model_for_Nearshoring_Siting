@@ -1,68 +1,43 @@
-# Hybrid GNN-MIP Siting Simulation Plan
+# Implementation Plan
 
-This plan details the implementation of a Python simulation that replicates the Spatio-Temporal Graph Neural Network (STGNN) and Mixed-Integer Programming (MIP) hybrid facility location model for Ciudad Juárez, Chihuahua, as described in [Art_V03.pdf](file:///C:/Users/alann/Desktop/MIAAD/MICAI_2026/Microsoft+Word+Proceedings+Template+ZIP/Art_V03.pdf). 
+## Priority 1: Scientific Integrity
 
-## Goal Description
+- Remove all manual overwrites of experimental metrics.
+- Generate Table 2 outputs from evaluated assignments only.
+- Keep every synthetic assumption explicitly labeled in outputs and reports.
+- Add manuscript reconciliation notes for any value that changes from the current paper/README.
 
-The objetivo is to create a fully functional Python pipeline that uses real geographic layers of Ciudad Juárez to optimize the siting of 15 new industrial facilities across 50 candidate plots, comparing the Proposed GNN-MIP model against two baselines:
-1.  **Static GIS-AHP (Baseline 1)**: Greedy allocation based on straight-line Euclidean distance overlays, ignoring joint capacity constraints and network topologies.
-2.  **Abstract MILP (Baseline 2)**: Mathematical optimization model solved under hard bounds but using flat Euclidean distances, ignoring street networks, traffic congestion, and hazard barriers.
-3.  **Proposed GNN-MIP**: Optimization model using non-Euclidean network distances, dynamic travel times (simulating STGNN predictions with peak hour congestion), and hard environmental constraints.
+## Priority 2: Data and Reproducibility Foundation
 
-The simulation will ingest spatial shapefiles from [Datos/](file:///c:/Users/alann/Desktop/MIAAD/MICAI_2026/POC_SIMULATION/Datos), solve the models, write results to `siting-results.csv`, and plot the final spatial layout in `siting-comparison.png` (matching the layout in the paper).
+- Replace absolute paths with paths relative to the repository root.
+- Add `requirements.txt`, `config.yaml`, and `run_pipeline.py`.
+- Move constants such as seed, CRS, zone centers, synthetic capacities, profile loads, and objective weights into config.
+- Create an `outputs/` directory tree for metrics, tables, figures, allocations, and reports.
 
----
+## Priority 3: STGNN
 
-## User Review Required
+- Implement a real PyTorch GCN-GRU module with deterministic seed support.
+- Add a traffic dataset loader that searches for temporal traffic fields.
+- If empirical temporal data are absent, stop empirical training with a clear message and optionally run a labeled synthetic experiment.
+- Save feature schema, training history, checkpoint, and MAE/RMSE only when a supervised test set exists.
 
-> [!IMPORTANT]
-> - **Candidate Plots and Infrastructure Nodes**: Since there is no explicit separate file containing the 50 candidate vacant parcels, we will select 50 candidate plots from the vacant polygons in [Traza_Wgs84.shp](file:///c:/Users/alann/Desktop/MIAAD/MICAI_2026/POC_SIMULATION/Datos/Traza.zip) and from existing industrial clusters. We will extract 5 CFE substations and 5 JMAS sewer outlets from the utilities in [denue_inegi_08_.csv](file:///c:/Users/alann/Desktop/MIAAD/MICAI_2026/POC_SIMULATION/Datos/denue_08_csv.zip) (activity code starting with 22).
-> - **Spatio-Temporal GNN Emulation**: To capture the dynamic, non-Euclidean nature of logistics times without needing a long Deep Learning training phase, we will implement a Python class representing a GCN-GRU. It will compute shortest path network distances on the major road network of Ciudad Juárez (`V_PPAL == 'SI'` from [VialidadWgs84.shp](file:///c:/Users/alann/Desktop/MIAAD/MICAI_2026/POC_SIMULATION/Datos/Vialidad.zip)) and apply time-of-day traffic congestion multipliers (e.g., 1.5x congestion factor during peak commuting shifts towards international bridges) to generate the dynamic travel time matrix $T_{jk}(t)$.
+## Priority 4: MILP Correctness
 
----
+- Keep shared CFE capacity aggregated at substation level.
+- Add commute cost to the objective for labor-intensive manufacturing if the manuscript keeps that claim.
+- Align Heavy Assembly kVA ranges with the manuscript or document scenario assumptions.
+- Apply the same feasibility constraints to comparable MILP baselines.
 
-## Proposed Changes
+## Priority 5: Baselines, Ablation, and Sensitivity
 
-We will create two new files in the workspace:
+- Rename current weighted baseline unless a true AHP pairwise matrix is implemented.
+- Add Euclidean MILP, Network MILP, and STGNN-MILP variants with comparable constraints.
+- Automate sensitivity runs for -30%, -20%, -10%, 0%, +10%, +20%, +30%.
+- Save raw sensitivity runs and aggregate summaries.
 
-### [Simulation Pipeline]
+## Priority 6: Paper Reconciliation
 
-#### [NEW] [simulate_siting.py](file:///c:/Users/alann/Desktop/MIAAD/MICAI_2026/POC_SIMULATION/simulate_siting.py)
-This is the core Python script. It will:
-1.  **Extract and Load Spatial Data**: Unzip and load shapefiles/CSVs (`Vialidad`, `Colonias`, `Traza`, `AreasVerdes`, `denue_08`).
-2.  **Filter and Build Graph**: Filter the road network to keep primary streets (`V_PPAL == "SI"`) and build a NetworkX graph with UTM coordinates.
-3.  **Define Entities**:
-    *   Set the 3 border ports of entry: Zaragoza, Américas, Jerónimo-Santa Teresa.
-    *   Identify CFE and JMAS infrastructure nodes from the DENUE utilities dataset.
-    *   Select 50 candidate vacant plots distributed across the 5 municipal planning zones (Norte Centro, Oriente, Sur, Suroriente, and San Jerónimo).
-4.  **Emulate GNN Travel Times**: Run network shortest path queries and apply congestion factors to get dynamic travel times.
-5.  **Evaluate Utilities and Hazards**:
-    *   Calculate network distance to nearest CFE substation and JMAS sewer collector.
-    *   Synthesize hazard risk layers (geological faults, flood susceptibility, water stress) based on topographic properties.
-6.  **Formulate and Solve optimization (PuLP)**:
-    *   Solve the **Static GIS-AHP** model.
-    *   Solve the **Abstract MILP** model.
-    *   Solve the **Proposed GNN-MIP** model.
-7.  **Generate Outputs**: Save the metrics comparison to a text report, output the spatial allocation details to `siting-results.csv`, and render the final comparison plot to `siting-comparison.png`.
+- Compare generated outputs with the manuscript values.
+- Update `MANUSCRIPT_RECONCILIATION.md` whenever the code produces values that differ from the current paper.
+- Keep README claims limited to what the code and data actually support.
 
-#### [NEW] [run_simulation.bat](file:///c:/Users/alann/Desktop/MIAAD/MICAI_2026/POC_SIMULATION/run_simulation.bat)
-A simple Windows command script to execute the simulation.
-
----
-
-## Verification Plan
-
-### Automated Tests
-*   Run the simulation script via batch command:
-    ```powershell
-    python simulate_siting.py
-    ```
-*   Verify that `siting-results.csv` and `siting-comparison.png` are created and contain non-empty data.
-*   Compare the output metrics with Table 2 of the paper:
-    *   *CFE grid extension* should decrease from ~40.8 km (baselines) to ~36.6 km (GNN-MIP).
-    *   *JMAS sewer extension* should decrease from ~44.8 km to ~39.5 km.
-    *   *Average commute time* should decrease from ~24-27 min to ~17.6 min.
-    *   *Substation overloads and hazard violations* should drop to 0 for the GNN-MIP model.
-
-### Manual Verification
-*   Inspect the generated `siting-comparison.png` image to ensure that the layout matches the visual arrangement and color coding shown in the paper's results.

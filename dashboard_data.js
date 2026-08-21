@@ -743,27 +743,27 @@ const dashboardData = {
   "metrics": {
     "ahp": {
       "name": "Static GIS-AHP (Baseline 1)",
-      "cfe_ext": 40802.8,
-      "jmas_ext": 44852.1,
-      "avg_commute": 23.96,
-      "overloads": 2,
-      "hazards": 3,
+      "cfe_ext": 20751.41720522531,
+      "jmas_ext": 19730.337198908717,
+      "avg_commute": 16.61015196964303,
+      "overloads": 1,
+      "hazards": 1,
       "water": 0
     },
     "abs": {
       "name": "Abstract MILP (Baseline 2)",
-      "cfe_ext": 40802.8,
-      "jmas_ext": 44852.1,
-      "avg_commute": 27.88,
-      "overloads": 1,
-      "hazards": 3,
-      "water": 2
+      "cfe_ext": 22730.814415148994,
+      "jmas_ext": 22730.814415148994,
+      "avg_commute": 15.93278591468349,
+      "overloads": 0,
+      "hazards": 0,
+      "water": 1
     },
     "gnn": {
       "name": "Proposed GNN-MIP Simulator",
-      "cfe_ext": 36665.7,
-      "jmas_ext": 39505.2,
-      "avg_commute": 17.67,
+      "cfe_ext": 20280.754704781502,
+      "jmas_ext": 20604.58207199206,
+      "avg_commute": 15.804151926314438,
       "overloads": 0,
       "hazards": 0,
       "water": 0

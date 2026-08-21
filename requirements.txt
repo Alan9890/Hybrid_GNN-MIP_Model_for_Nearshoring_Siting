@@ -1,0 +1,9 @@
+geopandas
+matplotlib
+networkx
+numpy
+pandas
+pulp
+pyproj
+scipy
+shapely

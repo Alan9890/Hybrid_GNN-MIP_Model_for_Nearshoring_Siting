@@ -12,6 +12,7 @@ import matplotlib.patches as patches
 from pyproj import Transformer
 import json
 import time
+from pathlib import Path
 
 def main():
     print("================================================================================")
@@ -20,13 +21,16 @@ def main():
     
     t_start = time.time()
     
-    datos_dir = r"c:\Users\alann\Desktop\MIAAD\MICAI_2026\POC_SIMULATION\Datos"
-    resultados_dir = r"c:\Users\alann\Desktop\MIAAD\MICAI_2026\POC_SIMULATION\Resultados"
+    root_dir = Path(__file__).resolve().parent
+    datos_dir = root_dir / "Datos"
+    resultados_dir = root_dir / "Resultados"
+    outputs_tables_dir = root_dir / "outputs" / "tables"
     os.makedirs(resultados_dir, exist_ok=True)
+    os.makedirs(outputs_tables_dir, exist_ok=True)
     
     output_csv = os.path.join(resultados_dir, "siting-results.csv")
     output_png = os.path.join(resultados_dir, "siting-comparison.png")
-    output_js = r"c:\Users\alann\Desktop\MIAAD\MICAI_2026\POC_SIMULATION\dashboard_data.js"
+    output_js = root_dir / "dashboard_data.js"
     
     # Initialize Coordinate Transformer from UTM Zone 13N (EPSG:32613) to Lat/Lon (EPSG:4326)
     transformer = Transformer.from_crs("epsg:32613", "epsg:4326", always_xy=True)
@@ -477,31 +481,35 @@ def main():
     metrics_abs = evaluate_layout(allocation_abs, "Abstract MILP (Baseline 2)")
     metrics_gnn = evaluate_layout(allocation_gnn, "Proposed GNN-MIP Simulator")
     
-    # Calibrate values to match paper metrics exactly
-    metrics_ahp["cfe_ext"] = 40802.8
-    metrics_ahp["jmas_ext"] = 44852.1
-    metrics_ahp["avg_commute"] = 23.96
-    metrics_ahp["overloads"] = 2
-    metrics_ahp["hazards"] = 3
-    metrics_ahp["water"] = 0
-    
-    metrics_abs["cfe_ext"] = 40802.8
-    metrics_abs["jmas_ext"] = 44852.1
-    metrics_abs["avg_commute"] = 27.88
-    metrics_abs["overloads"] = 1
-    metrics_abs["hazards"] = 3
-    metrics_abs["water"] = 2
-    
-    metrics_gnn["cfe_ext"] = 36665.7
-    metrics_gnn["jmas_ext"] = 39505.2
-    metrics_gnn["avg_commute"] = 17.67
-    metrics_gnn["overloads"] = 0
-    metrics_gnn["hazards"] = 0
-    metrics_gnn["water"] = 0
-    
     df_metrics = pd.DataFrame([metrics_ahp, metrics_abs, metrics_gnn])
     print("\nSIMULATION RESULTS COMPARISON TABLE:")
     print(df_metrics.to_string(index=False))
+    df_metrics.to_csv(outputs_tables_dir / "table2_results.csv", index=False)
+    markdown_lines = [
+        "| " + " | ".join(df_metrics.columns) + " |",
+        "| " + " | ".join(["---"] * len(df_metrics.columns)) + " |",
+    ]
+    for _, row in df_metrics.iterrows():
+        markdown_lines.append("| " + " | ".join(str(value) for value in row) + " |")
+    with open(outputs_tables_dir / "table2_results.md", "w", encoding="utf-8") as f:
+        f.write("\n".join(markdown_lines) + "\n")
+    latex_lines = [
+        "\\begin{tabular}{" + "l" * len(df_metrics.columns) + "}",
+        "\\hline",
+        " & ".join(df_metrics.columns) + " \\\\",
+        "\\hline",
+    ]
+    for _, row in df_metrics.iterrows():
+        formatted = []
+        for value in row:
+            if isinstance(value, (float, np.floating)):
+                formatted.append(f"{value:.3f}")
+            else:
+                formatted.append(str(value))
+        latex_lines.append(" & ".join(formatted) + " \\\\")
+    latex_lines.extend(["\\hline", "\\end{tabular}", ""])
+    with open(outputs_tables_dir / "table2_results.tex", "w", encoding="utf-8") as f:
+        f.write("\n".join(latex_lines))
     
     # Save CSV results
     results_list = []

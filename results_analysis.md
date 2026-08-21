@@ -1,5 +1,7 @@
 # Análisis Científico de Resultados y Conclusiones para el Artículo
 
+> Scientific status note: this document predates the removal of hardcoded Table 2 metrics. Treat the older numerical claims below as manuscript draft text requiring reconciliation. The current generated table is `outputs/tables/table2_results.csv`, and required paper edits are tracked in `MANUSCRIPT_RECONCILIATION.md`.
+
 Este documento contiene un análisis riguroso y académico de los resultados obtenidos en la simulación del modelo **GNN-MIP**, estructurado para ser copiado o adaptado directamente en la sección de **"Results and Discussion"** y **"Conclusions"** de tu artículo científico.
 
 ---
