@@ -1,0 +1,39 @@
+{
+  "scenario": "synthetic_ablation_over_empirical_road_graph",
+  "observed_historical_traffic": false,
+  "variants": [
+    {
+      "id": "euclidean_milp",
+      "name": "Euclidean MILP",
+      "cfe_distance": "cfe_euclidean",
+      "jmas_distance": "jmas_euclidean",
+      "bridge_distance": "bridge_euclidean",
+      "network_topology": false,
+      "dynamic_stgnn": false
+    },
+    {
+      "id": "network_milp",
+      "name": "Network MILP",
+      "cfe_distance": "cfe_network",
+      "jmas_distance": "jmas_network",
+      "bridge_distance": "bridge_network",
+      "network_topology": true,
+      "dynamic_stgnn": false
+    },
+    {
+      "id": "synthetic_stgnn_milp",
+      "name": "Synthetic-STGNN MILP",
+      "cfe_distance": "cfe_network",
+      "jmas_distance": "jmas_network",
+      "bridge_distance": "bridge_network",
+      "network_topology": true,
+      "dynamic_stgnn": true
+    }
+  ],
+  "weights": {
+    "alpha": 1.0,
+    "beta": 1.0,
+    "gamma": 2.0,
+    "delta_worker_commute": 2500.0
+  }
+}

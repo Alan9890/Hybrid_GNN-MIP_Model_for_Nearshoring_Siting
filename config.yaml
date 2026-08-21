@@ -13,10 +13,11 @@ scenario_status:
   cfe_substations: "synthetic_assumption"
   jmas_outlets: "synthetic_assumption"
   hazards: "synthetic_assumption"
-  traffic: "stgnn_training_requires_empirical_temporal_traffic_data"
+  traffic: "synthetic_experiment_enabled_not_observed_historical_traffic"
 
 stgnn:
   window: 12
+  target_column: "travel_time_min"
   gcn_hidden: 32
   gru_hidden: 64
   gru_layers: 1
@@ -26,11 +27,22 @@ stgnn:
   epochs: 200
   early_stopping_patience: 20
 
+synthetic_traffic:
+  enabled: true
+  node_count: 64
+  periods: 240
+  frequency: "h"
+  start_timestamp: "2026-01-01 00:00:00"
+  base_speed_kph: 48.0
+  noise_std_kph: 1.75
+  output_dir: "outputs/synthetic"
+
 optimization:
   solver: "CBC"
   alpha_cfe_distance: 1.0
   beta_jmas_distance: 1.0
   gamma_bridge_travel: 2.0
+  delta_worker_commute_profile3: 2500.0
 
 sensitivity:
   variations:

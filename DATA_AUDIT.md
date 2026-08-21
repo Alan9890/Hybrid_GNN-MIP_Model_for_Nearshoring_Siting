@@ -34,8 +34,8 @@ Note: GeoPandas/pyogrio reports invalid winding order and mixed polygon geometry
 | JMAS outlets | Generated offsets near zone centers | Cannot support empirical sewer collector claims | Replace with JMAS network/collector data or state as scenario assumption |
 | Fault and flood hazards | Hardcoded line/basin functions | Cannot support official hazard compliance claims | Replace with hazard layers or state as synthetic stress test |
 | Water stress | Hardcoded zone category | Cannot support aquifer policy claims | Replace with cited layer/threshold or state as scenario assumption |
-| Traffic congestion | Fixed bridge factors 1.1, 1.6, 1.8 | Not an STGNN and not learned | Add real temporal data or report only a synthetic traffic scenario |
+| Traffic congestion | Synthetic temporal traffic experiment and synthetic parcel-to-border matrix | Not observed historical traffic | Use for method validation only; replace with empirical temporal traffic for field claims |
 
 ## Data Gaps Blocking Empirical STGNN Claims
 
-No repository file currently provides a supervised temporal traffic table with fields like `timestamp`, `road_segment_id`, `speed`, or `travel_time`. A real GCN-GRU implementation now exists under `src/stgnn/`, but it cannot produce empirical MAE/RMSE without temporal targets. The current training stage writes `outputs/metrics/stgnn_status.json` with a skipped status instead of fabricating traffic evidence.
+No repository file currently provides observed supervised temporal traffic fields like `timestamp`, `road_segment_id`, `speed`, or `travel_time`. A real GCN-GRU implementation now exists under `src/stgnn/`, and an explicitly synthetic temporal traffic experiment can generate method-validation data. Synthetic MAE/RMSE, if trained, must be reported as synthetic only.

@@ -20,10 +20,10 @@ Paper:
 The manuscript mentions STGNN MAE/RMSE values.
 
 Repository result:
-A trainable GCN-GRU implementation, chronological split, checkpointing, and held-out MAE/RMSE code now exist. However, no empirical temporal traffic dataset currently exists in the repository, so the training stage is skipped and no empirical MAE/RMSE should be reported.
+A trainable GCN-GRU implementation, chronological split, checkpointing, and held-out MAE/RMSE code now exist. The repository can generate an explicitly synthetic temporal traffic experiment. However, no empirical temporal traffic dataset currently exists in the repository, so no empirical MAE/RMSE should be reported.
 
 Action:
-Remove the empirical MAE/RMSE claim until temporal traffic data and training are implemented, or label any future synthetic experiment explicitly.
+Replace the empirical MAE/RMSE claim with either empirical values after real temporal traffic data are added, or explicitly label any generated metrics as synthetic experiment results.
 
 Reason:
 No supervised traffic prediction evidence exists in the repository at this stage.
@@ -41,3 +41,17 @@ Either replace these with empirical layers or revise the manuscript to describe 
 
 Reason:
 The available repository data do not support those empirical claims yet.
+
+## Statement requiring update: Profile 3 worker commute optimization
+
+Paper:
+Labor-Intensive Manufacturing is optimized to minimize worker commute times.
+
+Repository result:
+The MILP now includes a Profile 3 worker-commute objective term controlled by `optimization.delta_worker_commute_profile3` in `config.yaml`. The current synthetic solution achieves Profile 3 average commute of 2.9764 minutes, but this is based on synthetic candidate parcels and colonia-centroid commute proxies.
+
+Action:
+Keep the optimization claim only if the manuscript labels the worker-accessibility input as a proxy/synthetic scenario, or replace the proxy with empirical worker/transit data.
+
+Reason:
+The commute term is now implemented, but the underlying accessibility data are not yet observed public-transit isochrones.

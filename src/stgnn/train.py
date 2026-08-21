@@ -10,8 +10,10 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+import pandas as pd
 
 from .traffic_dataset import (
+    TrafficColumns,
     build_temporal_samples,
     chronological_split_indices,
     discover_traffic_dataset,
@@ -31,16 +33,54 @@ class STGNNConfig:
     weight_decay: float = 0.00001
     epochs: int = 200
     early_stopping_patience: int = 20
+    target_column: str = "travel_time_min"
 
 
 def _load_yaml_config(config_path: Path) -> dict[str, Any]:
     try:
         import yaml
     except ImportError:
-        return {}
+        return _load_simple_yaml(config_path)
     with open(config_path, "r", encoding="utf-8") as handle:
         loaded = yaml.safe_load(handle) or {}
     return loaded if isinstance(loaded, dict) else {}
+
+
+def _parse_scalar(value: str) -> Any:
+    value = value.strip().strip('"').strip("'")
+    if value.lower() in {"true", "false"}:
+        return value.lower() == "true"
+    try:
+        if "." in value:
+            return float(value)
+        return int(value)
+    except ValueError:
+        return value
+
+
+def _load_simple_yaml(config_path: Path) -> dict[str, Any]:
+    """Parse the simple two-level config.yaml used by this repository."""
+
+    parsed: dict[str, Any] = {}
+    current_section: str | None = None
+    with open(config_path, "r", encoding="utf-8") as handle:
+        for raw_line in handle:
+            line = raw_line.split("#", 1)[0].rstrip()
+            if not line:
+                continue
+            if not raw_line.startswith(" ") and line.endswith(":"):
+                current_section = line[:-1]
+                parsed[current_section] = {}
+                continue
+            if not raw_line.startswith(" ") and ":" in line:
+                key, value = line.split(":", 1)
+                parsed[key.strip()] = _parse_scalar(value)
+                current_section = None
+                continue
+            if current_section and ":" in line:
+                key, value = line.split(":", 1)
+                parsed[current_section][key.strip()] = _parse_scalar(value)
+    return parsed
 
 
 def load_stgnn_config(config_path: Path) -> STGNNConfig:
@@ -59,6 +99,7 @@ def load_stgnn_config(config_path: Path) -> STGNNConfig:
         early_stopping_patience=int(
             stgnn.get("early_stopping_patience", STGNNConfig.early_stopping_patience)
         ),
+        target_column=str(stgnn.get("target_column", STGNNConfig.target_column)),
     )
 
 
@@ -197,20 +238,75 @@ def train_from_repository_data(config_path: Path, data_dir: Path, outputs_dir: P
     """Train on empirical traffic data if present; otherwise record a skipped status."""
 
     config = load_stgnn_config(config_path)
+    loaded_config = _load_yaml_config(config_path)
     discovery = discover_traffic_dataset(data_dir)
     status_path = outputs_dir / "metrics" / "stgnn_status.json"
     if discovery is None:
-        payload = {
-            "status": "skipped_missing_empirical_traffic_data",
-            "reason": (
-                "No CSV in the data directory contains timestamp, road segment id, "
-                "and speed/travel-time target columns required for supervised STGNN training."
-            ),
-            "data_dir": str(Path(data_dir).resolve()),
-            "model_implemented": "src.stgnn.model.GCNGRU",
-        }
-        _write_json(status_path, payload)
-        return payload
+        synthetic_config = loaded_config.get("synthetic_traffic", {})
+        if isinstance(synthetic_config, dict) and synthetic_config.get("enabled", False):
+            from .synthetic import generate_synthetic_traffic, generate_synthetic_travel_time_matrix
+
+            repo_root = config_path.resolve().parent
+            synthetic_metadata = generate_synthetic_traffic(repo_root, loaded_config)
+            matrix_path = generate_synthetic_travel_time_matrix(repo_root, loaded_config)
+            try:
+                synthetic_frame = pd.read_csv(synthetic_metadata["traffic_csv"])
+                synthetic_columns = TrafficColumns(
+                    timestamp="timestamp",
+                    segment_id="road_segment_id",
+                    target=config.target_column,
+                )
+                x, y, node_ids, timestamps = build_temporal_samples(
+                    synthetic_frame,
+                    synthetic_columns,
+                    config.window,
+                )
+                adjacency = np.load(synthetic_metadata["adjacency_npy"]).astype("float32")
+                feature_schema = {
+                    "source": synthetic_metadata["traffic_csv"],
+                    "scenario": synthetic_metadata["scenario"],
+                    "observed_historical_traffic": False,
+                    "timestamp_column": "timestamp",
+                    "segment_column": "road_segment_id",
+                    "target_column": config.target_column,
+                    "node_count": len(node_ids),
+                    "sample_count": len(x),
+                    "window": config.window,
+                    "target_timestamps_start": timestamps[0],
+                    "target_timestamps_end": timestamps[-1],
+                    "adjacency_note": "Adjacency is derived from proximity over the empirical major-road graph.",
+                }
+                _write_json(outputs_dir / "metrics" / "feature_schema.json", feature_schema)
+                metrics = train_from_arrays(x, y, adjacency, config, outputs_dir)
+                metrics["scenario"] = "synthetic_traffic_over_empirical_road_graph"
+                metrics["observed_historical_traffic"] = False
+                metrics["travel_time_matrix"] = str(matrix_path)
+                _write_json(outputs_dir / "metrics" / "stgnn_test_metrics.json", metrics)
+                _write_json(status_path, metrics)
+                return metrics
+            except ImportError as exc:
+                payload = {
+                    "status": "generated_synthetic_data_but_training_skipped_missing_torch",
+                    "reason": str(exc),
+                    "synthetic_traffic": synthetic_metadata["traffic_csv"],
+                    "travel_time_matrix": str(matrix_path),
+                    "observed_historical_traffic": False,
+                    "model_implemented": "src.stgnn.model.GCNGRU",
+                }
+                _write_json(status_path, payload)
+                return payload
+        else:
+            payload = {
+                "status": "skipped_missing_empirical_traffic_data",
+                "reason": (
+                    "No CSV in the data directory contains timestamp, road segment id, "
+                    "and speed/travel-time target columns required for supervised STGNN training."
+                ),
+                "data_dir": str(Path(data_dir).resolve()),
+                "model_implemented": "src.stgnn.model.GCNGRU",
+            }
+            _write_json(status_path, payload)
+            return payload
 
     frame = load_discovered_traffic(discovery)
     x, y, node_ids, timestamps = build_temporal_samples(frame, discovery.columns, config.window)

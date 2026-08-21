@@ -94,7 +94,7 @@ def main():
                     dist = np.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
                     G.add_edge(p1, p2, weight=dist)
                     
-    print(f"  Graph created with {G.number_of_nodes()} nodes and {G.number_of_edges()} edges.")
+    print(f"  Graph has {G.number_of_nodes()} nodes and {G.number_of_edges()} edges.")
     
     # Extract largest connected component to ensure connectivity
     largest_cc = max(nx.connected_components(G), key=len)
@@ -158,7 +158,10 @@ def main():
         p1 = np.array([355000.0, 3512000.0])
         p2 = np.array([368000.0, 3501000.0])
         p3 = np.array([x, y])
-        return np.abs(np.cross(p2-p1, p1-p3))/np.linalg.norm(p2-p1)
+        line = p2 - p1
+        point = p1 - p3
+        cross_2d = line[0] * point[1] - line[1] * point[0]
+        return np.abs(cross_2d) / np.linalg.norm(line)
         
     flood_basin_1 = np.array([358000.0, 3511000.0])
     flood_basin_2 = np.array([367000.0, 3504500.0])
@@ -296,6 +299,18 @@ def main():
             commute_times.append(ndist / (40.0 * 1000.0 / 60.0))
         plot_commute[pid] = np.mean(commute_times)
         
+    travel_time_matrix_path = root_dir / "outputs" / "metrics" / "travel_time_matrix.csv"
+    if travel_time_matrix_path.exists():
+        print(f"  Applying travel-time coefficients from: {travel_time_matrix_path}")
+        df_travel_time = pd.read_csv(travel_time_matrix_path)
+        for _, row in df_travel_time.iterrows():
+            pid = int(row["parcel_id"])
+            bridge = row["border_crossing"]
+            if pid in plot_bridges_net and bridge in plot_bridges_net[pid]:
+                plot_bridges_net[pid][bridge] = float(row["predicted_minutes"])
+    else:
+        print("  No STGNN/synthetic travel-time matrix found; using fixed bridge factors.")
+
     print("  Distance matrices computed successfully.")
     
     # 7. OPTIMIZATION MODELS FORMULATION
@@ -318,6 +333,7 @@ def main():
     z_gnn = pulp.LpVariable.dicts("z_gnn", ((j, p) for j in range(num_plots) for p in range(num_projs)), cat='Binary')
     
     alpha, beta, gamma = 1.0, 1.0, 2.0
+    delta_worker_commute = 2500.0
     
     cost_gnn = []
     for j in range(num_plots):
@@ -327,7 +343,14 @@ def main():
         for p in range(num_projs):
             proj = projects[p]
             bridge_travel_cost = sum(plot_bridges_net[j][bname] * proj["freight"] for bname in bridges)
-            total_coef = plot["price"] + alpha * nearest_cfe_dist + beta * nearest_jmas_dist + gamma * bridge_travel_cost
+            worker_commute_cost = delta_worker_commute * plot_commute[j] if proj["name"].startswith("LightMfg") else 0.0
+            total_coef = (
+                plot["price"]
+                + alpha * nearest_cfe_dist
+                + beta * nearest_jmas_dist
+                + gamma * bridge_travel_cost
+                + worker_commute_cost
+            )
             cost_gnn.append(z_gnn[(j, p)] * total_coef)
             
     prob_gnn += pulp.lpSum(cost_gnn)
@@ -375,7 +398,14 @@ def main():
         for p in range(num_projs):
             proj = projects[p]
             bridge_travel_cost = sum(plot_bridges_euc[j][bname] * proj["freight"] for bname in bridges)
-            total_coef = plot["price"] + alpha * nearest_cfe_dist + beta * nearest_jmas_dist + gamma * bridge_travel_cost
+            worker_commute_cost = delta_worker_commute * plot_commute[j] if proj["name"].startswith("LightMfg") else 0.0
+            total_coef = (
+                plot["price"]
+                + alpha * nearest_cfe_dist
+                + beta * nearest_jmas_dist
+                + gamma * bridge_travel_cost
+                + worker_commute_cost
+            )
             cost_abs.append(z_abs[(j, p)] * total_coef)
             
     prob_abs += pulp.lpSum(cost_abs)

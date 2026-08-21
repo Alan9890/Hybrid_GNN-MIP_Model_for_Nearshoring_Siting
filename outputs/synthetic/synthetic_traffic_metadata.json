@@ -1,0 +1,18 @@
+{
+  "status": "generated",
+  "scenario": "synthetic_traffic_over_empirical_road_graph",
+  "observed_historical_traffic": false,
+  "road_graph_nodes": 21528,
+  "road_graph_edges": 22100,
+  "synthetic_sensor_nodes": 64,
+  "periods": 240,
+  "frequency": "h",
+  "traffic_csv": "C:\\Users\\alann\\Desktop\\MIAAD\\MICAI_2026\\POC_SIMULATION\\outputs\\synthetic\\synthetic_traffic.csv",
+  "adjacency_npy": "C:\\Users\\alann\\Desktop\\MIAAD\\MICAI_2026\\POC_SIMULATION\\outputs\\synthetic\\synthetic_adjacency.npy",
+  "columns": [
+    "timestamp",
+    "road_segment_id",
+    "speed_kph",
+    "travel_time_min"
+  ]
+}

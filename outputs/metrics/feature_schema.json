@@ -1,0 +1,14 @@
+{
+  "source": "C:\\Users\\alann\\Desktop\\MIAAD\\MICAI_2026\\POC_SIMULATION\\outputs\\synthetic\\synthetic_traffic.csv",
+  "scenario": "synthetic_traffic_over_empirical_road_graph",
+  "observed_historical_traffic": false,
+  "timestamp_column": "timestamp",
+  "segment_column": "road_segment_id",
+  "target_column": "travel_time_min",
+  "node_count": 64,
+  "sample_count": 228,
+  "window": 12,
+  "target_timestamps_start": "2026-01-01T12:00:00",
+  "target_timestamps_end": "2026-01-10T23:00:00",
+  "adjacency_note": "Adjacency is derived from proximity over the empirical major-road graph."
+}

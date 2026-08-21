@@ -1,0 +1,151 @@
+parcel_id,border_crossing,timestamp_or_scenario,predicted_minutes,baseline_minutes,source
+0,Zaragoza,synthetic_peak_shift,47.8842,31.2285,synthetic_scenario_not_observed_traffic
+0,Americas,synthetic_peak_shift,42.7752,24.2285,synthetic_scenario_not_observed_traffic
+0,Santa Teresa,synthetic_peak_shift,8.4217,7.2285,synthetic_scenario_not_observed_traffic
+1,Zaragoza,synthetic_peak_shift,45.1308,29.5367,synthetic_scenario_not_observed_traffic
+1,Americas,synthetic_peak_shift,39.5032,22.5367,synthetic_scenario_not_observed_traffic
+1,Santa Teresa,synthetic_peak_shift,5.9323,5.5367,synthetic_scenario_not_observed_traffic
+2,Zaragoza,synthetic_peak_shift,47.6039,30.9874,synthetic_scenario_not_observed_traffic
+2,Americas,synthetic_peak_shift,42.4176,23.9874,synthetic_scenario_not_observed_traffic
+2,Santa Teresa,synthetic_peak_shift,8.075,6.9874,synthetic_scenario_not_observed_traffic
+3,Zaragoza,synthetic_peak_shift,48.6904,31.0495,synthetic_scenario_not_observed_traffic
+3,Americas,synthetic_peak_shift,42.3204,24.0495,synthetic_scenario_not_observed_traffic
+3,Santa Teresa,synthetic_peak_shift,7.3248,7.0495,synthetic_scenario_not_observed_traffic
+4,Zaragoza,synthetic_peak_shift,47.9992,31.2766,synthetic_scenario_not_observed_traffic
+4,Americas,synthetic_peak_shift,42.9232,24.2766,synthetic_scenario_not_observed_traffic
+4,Santa Teresa,synthetic_peak_shift,7.9793,7.2766,synthetic_scenario_not_observed_traffic
+5,Zaragoza,synthetic_peak_shift,47.4946,30.8614,synthetic_scenario_not_observed_traffic
+5,Americas,synthetic_peak_shift,42.3686,23.8614,synthetic_scenario_not_observed_traffic
+5,Santa Teresa,synthetic_peak_shift,7.4702,6.8614,synthetic_scenario_not_observed_traffic
+6,Zaragoza,synthetic_peak_shift,47.376,30.6788,synthetic_scenario_not_observed_traffic
+6,Americas,synthetic_peak_shift,41.704,23.6788,synthetic_scenario_not_observed_traffic
+6,Santa Teresa,synthetic_peak_shift,7.5294,6.6788,synthetic_scenario_not_observed_traffic
+7,Zaragoza,synthetic_peak_shift,48.7452,31.3095,synthetic_scenario_not_observed_traffic
+7,Americas,synthetic_peak_shift,43.6125,24.3095,synthetic_scenario_not_observed_traffic
+7,Santa Teresa,synthetic_peak_shift,7.8373,7.3095,synthetic_scenario_not_observed_traffic
+8,Zaragoza,synthetic_peak_shift,47.0476,30.6158,synthetic_scenario_not_observed_traffic
+8,Americas,synthetic_peak_shift,41.6357,23.6158,synthetic_scenario_not_observed_traffic
+8,Santa Teresa,synthetic_peak_shift,7.8419,6.6158,synthetic_scenario_not_observed_traffic
+9,Zaragoza,synthetic_peak_shift,47.4975,30.9145,synthetic_scenario_not_observed_traffic
+9,Americas,synthetic_peak_shift,41.4382,23.9145,synthetic_scenario_not_observed_traffic
+9,Santa Teresa,synthetic_peak_shift,7.9313,6.9145,synthetic_scenario_not_observed_traffic
+10,Zaragoza,synthetic_peak_shift,35.2356,22.5574,synthetic_scenario_not_observed_traffic
+10,Americas,synthetic_peak_shift,16.3928,9.5574,synthetic_scenario_not_observed_traffic
+10,Santa Teresa,synthetic_peak_shift,27.1293,24.5574,synthetic_scenario_not_observed_traffic
+11,Zaragoza,synthetic_peak_shift,34.345,22.0875,synthetic_scenario_not_observed_traffic
+11,Americas,synthetic_peak_shift,16.3389,9.0875,synthetic_scenario_not_observed_traffic
+11,Santa Teresa,synthetic_peak_shift,26.6081,24.0875,synthetic_scenario_not_observed_traffic
+12,Zaragoza,synthetic_peak_shift,34.923,22.5092,synthetic_scenario_not_observed_traffic
+12,Americas,synthetic_peak_shift,16.7856,9.5092,synthetic_scenario_not_observed_traffic
+12,Santa Teresa,synthetic_peak_shift,27.2757,24.5092,synthetic_scenario_not_observed_traffic
+13,Zaragoza,synthetic_peak_shift,32.2462,20.9071,synthetic_scenario_not_observed_traffic
+13,Americas,synthetic_peak_shift,13.6023,7.9071,synthetic_scenario_not_observed_traffic
+13,Santa Teresa,synthetic_peak_shift,24.8784,22.9071,synthetic_scenario_not_observed_traffic
+14,Zaragoza,synthetic_peak_shift,34.5276,21.7936,synthetic_scenario_not_observed_traffic
+14,Americas,synthetic_peak_shift,14.956,8.7936,synthetic_scenario_not_observed_traffic
+14,Santa Teresa,synthetic_peak_shift,26.6571,23.7936,synthetic_scenario_not_observed_traffic
+15,Zaragoza,synthetic_peak_shift,31.9762,20.7378,synthetic_scenario_not_observed_traffic
+15,Americas,synthetic_peak_shift,13.6226,7.7378,synthetic_scenario_not_observed_traffic
+15,Santa Teresa,synthetic_peak_shift,25.3047,22.7378,synthetic_scenario_not_observed_traffic
+16,Zaragoza,synthetic_peak_shift,35.3235,22.5334,synthetic_scenario_not_observed_traffic
+16,Americas,synthetic_peak_shift,16.5091,9.5334,synthetic_scenario_not_observed_traffic
+16,Santa Teresa,synthetic_peak_shift,26.7556,24.5334,synthetic_scenario_not_observed_traffic
+17,Zaragoza,synthetic_peak_shift,35.0017,22.6435,synthetic_scenario_not_observed_traffic
+17,Americas,synthetic_peak_shift,16.2383,9.6435,synthetic_scenario_not_observed_traffic
+17,Santa Teresa,synthetic_peak_shift,26.5412,24.6435,synthetic_scenario_not_observed_traffic
+18,Zaragoza,synthetic_peak_shift,33.2797,21.3104,synthetic_scenario_not_observed_traffic
+18,Americas,synthetic_peak_shift,14.6144,8.3104,synthetic_scenario_not_observed_traffic
+18,Santa Teresa,synthetic_peak_shift,25.9867,23.3104,synthetic_scenario_not_observed_traffic
+19,Zaragoza,synthetic_peak_shift,33.6826,21.6796,synthetic_scenario_not_observed_traffic
+19,Americas,synthetic_peak_shift,15.502,8.6796,synthetic_scenario_not_observed_traffic
+19,Santa Teresa,synthetic_peak_shift,25.8928,23.6796,synthetic_scenario_not_observed_traffic
+20,Zaragoza,synthetic_peak_shift,15.7,10.3426,synthetic_scenario_not_observed_traffic
+20,Americas,synthetic_peak_shift,40.668,23.3426,synthetic_scenario_not_observed_traffic
+20,Santa Teresa,synthetic_peak_shift,37.586,34.3426,synthetic_scenario_not_observed_traffic
+21,Zaragoza,synthetic_peak_shift,14.3533,9.1031,synthetic_scenario_not_observed_traffic
+21,Americas,synthetic_peak_shift,38.4458,22.1031,synthetic_scenario_not_observed_traffic
+21,Santa Teresa,synthetic_peak_shift,36.4197,33.1031,synthetic_scenario_not_observed_traffic
+22,Zaragoza,synthetic_peak_shift,16.2821,10.3606,synthetic_scenario_not_observed_traffic
+22,Americas,synthetic_peak_shift,41.2137,23.3606,synthetic_scenario_not_observed_traffic
+22,Santa Teresa,synthetic_peak_shift,37.7474,34.3606,synthetic_scenario_not_observed_traffic
+23,Zaragoza,synthetic_peak_shift,14.9681,9.6825,synthetic_scenario_not_observed_traffic
+23,Americas,synthetic_peak_shift,38.8508,22.6825,synthetic_scenario_not_observed_traffic
+23,Santa Teresa,synthetic_peak_shift,36.3272,33.6825,synthetic_scenario_not_observed_traffic
+24,Zaragoza,synthetic_peak_shift,13.4637,9.008,synthetic_scenario_not_observed_traffic
+24,Americas,synthetic_peak_shift,38.7138,22.008,synthetic_scenario_not_observed_traffic
+24,Santa Teresa,synthetic_peak_shift,35.856,33.008,synthetic_scenario_not_observed_traffic
+25,Zaragoza,synthetic_peak_shift,15.71,9.7164,synthetic_scenario_not_observed_traffic
+25,Americas,synthetic_peak_shift,39.5755,22.7164,synthetic_scenario_not_observed_traffic
+25,Santa Teresa,synthetic_peak_shift,37.4568,33.7164,synthetic_scenario_not_observed_traffic
+26,Zaragoza,synthetic_peak_shift,14.312,9.2998,synthetic_scenario_not_observed_traffic
+26,Americas,synthetic_peak_shift,38.5496,22.2998,synthetic_scenario_not_observed_traffic
+26,Santa Teresa,synthetic_peak_shift,36.4602,33.2998,synthetic_scenario_not_observed_traffic
+27,Zaragoza,synthetic_peak_shift,15.6132,10.6302,synthetic_scenario_not_observed_traffic
+27,Americas,synthetic_peak_shift,41.5701,23.6302,synthetic_scenario_not_observed_traffic
+27,Santa Teresa,synthetic_peak_shift,38.2121,34.6302,synthetic_scenario_not_observed_traffic
+28,Zaragoza,synthetic_peak_shift,14.0863,9.5544,synthetic_scenario_not_observed_traffic
+28,Americas,synthetic_peak_shift,39.5062,22.5544,synthetic_scenario_not_observed_traffic
+28,Santa Teresa,synthetic_peak_shift,36.6451,33.5544,synthetic_scenario_not_observed_traffic
+29,Zaragoza,synthetic_peak_shift,15.7814,10.1745,synthetic_scenario_not_observed_traffic
+29,Americas,synthetic_peak_shift,41.3563,23.1745,synthetic_scenario_not_observed_traffic
+29,Santa Teresa,synthetic_peak_shift,37.4723,34.1745,synthetic_scenario_not_observed_traffic
+30,Zaragoza,synthetic_peak_shift,26.7998,17.2324,synthetic_scenario_not_observed_traffic
+30,Americas,synthetic_peak_shift,33.7667,19.2324,synthetic_scenario_not_observed_traffic
+30,Santa Teresa,synthetic_peak_shift,32.8352,29.2324,synthetic_scenario_not_observed_traffic
+31,Zaragoza,synthetic_peak_shift,29.0493,18.6263,synthetic_scenario_not_observed_traffic
+31,Americas,synthetic_peak_shift,36.8277,20.6263,synthetic_scenario_not_observed_traffic
+31,Santa Teresa,synthetic_peak_shift,33.0946,30.6263,synthetic_scenario_not_observed_traffic
+32,Zaragoza,synthetic_peak_shift,26.693,17.5202,synthetic_scenario_not_observed_traffic
+32,Americas,synthetic_peak_shift,33.9654,19.5202,synthetic_scenario_not_observed_traffic
+32,Santa Teresa,synthetic_peak_shift,31.7839,29.5202,synthetic_scenario_not_observed_traffic
+33,Zaragoza,synthetic_peak_shift,28.5273,18.4764,synthetic_scenario_not_observed_traffic
+33,Americas,synthetic_peak_shift,35.0982,20.4764,synthetic_scenario_not_observed_traffic
+33,Santa Teresa,synthetic_peak_shift,33.0162,30.4764,synthetic_scenario_not_observed_traffic
+34,Zaragoza,synthetic_peak_shift,28.6835,18.2351,synthetic_scenario_not_observed_traffic
+34,Americas,synthetic_peak_shift,36.4099,20.2351,synthetic_scenario_not_observed_traffic
+34,Santa Teresa,synthetic_peak_shift,34.7156,30.2351,synthetic_scenario_not_observed_traffic
+35,Zaragoza,synthetic_peak_shift,27.887,18.3108,synthetic_scenario_not_observed_traffic
+35,Americas,synthetic_peak_shift,34.4779,20.3108,synthetic_scenario_not_observed_traffic
+35,Santa Teresa,synthetic_peak_shift,33.4757,30.3108,synthetic_scenario_not_observed_traffic
+36,Zaragoza,synthetic_peak_shift,26.7473,17.3903,synthetic_scenario_not_observed_traffic
+36,Americas,synthetic_peak_shift,33.627,19.3903,synthetic_scenario_not_observed_traffic
+36,Santa Teresa,synthetic_peak_shift,32.2589,29.3903,synthetic_scenario_not_observed_traffic
+37,Zaragoza,synthetic_peak_shift,29.2177,18.7995,synthetic_scenario_not_observed_traffic
+37,Americas,synthetic_peak_shift,36.3198,20.7995,synthetic_scenario_not_observed_traffic
+37,Santa Teresa,synthetic_peak_shift,33.3616,30.7995,synthetic_scenario_not_observed_traffic
+38,Zaragoza,synthetic_peak_shift,25.71,16.744,synthetic_scenario_not_observed_traffic
+38,Americas,synthetic_peak_shift,32.7751,18.744,synthetic_scenario_not_observed_traffic
+38,Santa Teresa,synthetic_peak_shift,32.5024,28.744,synthetic_scenario_not_observed_traffic
+39,Zaragoza,synthetic_peak_shift,28.5428,18.0977,synthetic_scenario_not_observed_traffic
+39,Americas,synthetic_peak_shift,34.9213,20.0977,synthetic_scenario_not_observed_traffic
+39,Santa Teresa,synthetic_peak_shift,32.515,30.0977,synthetic_scenario_not_observed_traffic
+40,Zaragoza,synthetic_peak_shift,24.8654,16.2762,synthetic_scenario_not_observed_traffic
+40,Americas,synthetic_peak_shift,48.7975,27.2762,synthetic_scenario_not_observed_traffic
+40,Santa Teresa,synthetic_peak_shift,40.5931,37.2762,synthetic_scenario_not_observed_traffic
+41,Zaragoza,synthetic_peak_shift,26.8733,17.6289,synthetic_scenario_not_observed_traffic
+41,Americas,synthetic_peak_shift,50.5663,28.6289,synthetic_scenario_not_observed_traffic
+41,Santa Teresa,synthetic_peak_shift,42.6842,38.6289,synthetic_scenario_not_observed_traffic
+42,Zaragoza,synthetic_peak_shift,26.1475,16.8825,synthetic_scenario_not_observed_traffic
+42,Americas,synthetic_peak_shift,48.467,27.8825,synthetic_scenario_not_observed_traffic
+42,Santa Teresa,synthetic_peak_shift,41.8938,37.8825,synthetic_scenario_not_observed_traffic
+43,Zaragoza,synthetic_peak_shift,25.2083,16.6588,synthetic_scenario_not_observed_traffic
+43,Americas,synthetic_peak_shift,47.7639,27.6588,synthetic_scenario_not_observed_traffic
+43,Santa Teresa,synthetic_peak_shift,41.5109,37.6588,synthetic_scenario_not_observed_traffic
+44,Zaragoza,synthetic_peak_shift,28.2657,18.1843,synthetic_scenario_not_observed_traffic
+44,Americas,synthetic_peak_shift,51.0132,29.1843,synthetic_scenario_not_observed_traffic
+44,Santa Teresa,synthetic_peak_shift,43.2457,39.1843,synthetic_scenario_not_observed_traffic
+45,Zaragoza,synthetic_peak_shift,27.9779,17.9795,synthetic_scenario_not_observed_traffic
+45,Americas,synthetic_peak_shift,50.5087,28.9795,synthetic_scenario_not_observed_traffic
+45,Santa Teresa,synthetic_peak_shift,43.4306,38.9795,synthetic_scenario_not_observed_traffic
+46,Zaragoza,synthetic_peak_shift,27.6163,17.3216,synthetic_scenario_not_observed_traffic
+46,Americas,synthetic_peak_shift,49.6544,28.3216,synthetic_scenario_not_observed_traffic
+46,Santa Teresa,synthetic_peak_shift,41.5415,38.3216,synthetic_scenario_not_observed_traffic
+47,Zaragoza,synthetic_peak_shift,25.585,15.9739,synthetic_scenario_not_observed_traffic
+47,Americas,synthetic_peak_shift,48.0661,26.9739,synthetic_scenario_not_observed_traffic
+47,Santa Teresa,synthetic_peak_shift,40.5815,36.9739,synthetic_scenario_not_observed_traffic
+48,Zaragoza,synthetic_peak_shift,26.6353,16.7126,synthetic_scenario_not_observed_traffic
+48,Americas,synthetic_peak_shift,47.9435,27.7126,synthetic_scenario_not_observed_traffic
+48,Santa Teresa,synthetic_peak_shift,41.0365,37.7126,synthetic_scenario_not_observed_traffic
+49,Zaragoza,synthetic_peak_shift,26.9006,17.4825,synthetic_scenario_not_observed_traffic
+49,Americas,synthetic_peak_shift,49.8418,28.4825,synthetic_scenario_not_observed_traffic
+49,Santa Teresa,synthetic_peak_shift,42.249,38.4825,synthetic_scenario_not_observed_traffic

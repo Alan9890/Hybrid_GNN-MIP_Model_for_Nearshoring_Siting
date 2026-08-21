@@ -1,0 +1,49 @@
+{
+  "scenario": "synthetic_sensitivity_over_empirical_road_graph",
+  "observed_historical_traffic": false,
+  "base_weights": {
+    "alpha": 1.0,
+    "beta": 1.0,
+    "gamma": 2.0,
+    "delta_worker_commute": 2500.0
+  },
+  "variations": [
+    -0.3,
+    -0.2,
+    -0.1,
+    0.0,
+    0.1,
+    0.2,
+    0.3
+  ],
+  "baseline_variant": {
+    "id": "synthetic_stgnn_milp",
+    "name": "Synthetic-STGNN MILP",
+    "cfe_distance": "cfe_network",
+    "jmas_distance": "jmas_network",
+    "bridge_distance": "bridge_network",
+    "network_topology": true,
+    "dynamic_stgnn": true
+  },
+  "baseline_metrics": {
+    "variant_id": "synthetic_stgnn_milp",
+    "cfe_ext": 25575.60852485186,
+    "jmas_ext": 25872.12894960291,
+    "avg_commute": 14.340324046235244,
+    "profile3_avg_commute": 2.97640273324014,
+    "mean_freeflow_border_time": 28.379195887096067,
+    "mean_dynamic_border_time": 34.43140666666666,
+    "overloads": 0,
+    "hazards": 0,
+    "water": 0,
+    "assigned_projects": 15,
+    "model": "Synthetic-STGNN MILP",
+    "solver_status": "Optimal",
+    "objective_value": 1867046.2141508688,
+    "solver_runtime_sec": 0.49131470001884736,
+    "network_topology": true,
+    "dynamic_stgnn": true,
+    "cfe_capacity": true,
+    "environmental_constraints": true
+  }
+}

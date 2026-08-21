@@ -1,81 +1,79 @@
 # Repository Audit
 
-## Existing Files
+## Current Repository Contents
 
-### Python scripts
+### Core execution
 
-- `simulate_siting.py`: monolithic simulation script that loads selected GIS layers, builds a road graph, generates candidate plots and infrastructure proxies, solves optimization baselines, exports CSV/JS/PNG outputs.
+- `run_pipeline.py`: one-command orchestration for synthetic STGNN preparation/training, GIS simulation, ablation, and sensitivity outputs.
+- `simulate_siting.py`: GIS loading, road-graph construction, travel-time lookup, MILP solving, dashboard export, and Table 2 export.
+- `config.yaml`: central configuration for paths, seeds, STGNN, MILP weights, and experiment parameters.
+- `requirements.txt`: Python dependencies for the reproducible environment.
 
-### Dashboard and documentation
+### Model and experiments
 
-- `index.html`: Leaflet/Chart.js dashboard using `dashboard_data.js`.
-- `dashboard_data.js`: generated dashboard dataset from a prior run.
-- `README.md`: describes the project and includes a performance table with manuscript-style values.
-- `implementation_plan.md`: earlier implementation plan.
-- `results_analysis.md`: narrative analysis using the prior fixed results.
-- `CODEX_IMPLEMENTATION_SPEC_HYBRID_GNN_MIP.md`: user-provided implementation specification for scientific reproducibility.
+- `src/stgnn/model.py`: real GCN+GRU implementation in PyTorch.
+- `src/stgnn/traffic_dataset.py`: chronological temporal dataset creation.
+- `src/stgnn/synthetic.py`: synthetic temporal traffic and adjacency generation.
+- `src/stgnn/train.py`: training, validation, test MAE/RMSE, checkpointing, and travel-time matrix export.
+- `src/experiments/ablation.py`: fair Euclidean, Network, and Synthetic-STGNN MILP comparison.
+- `src/experiments/sensitivity.py`: deterministic weight-perturbation sensitivity analysis.
+- `tests/test_stgnn.py`: focused model and synthetic-data tests.
 
 ### Data and outputs
 
-- `Datos/*.zip`: observed GIS/tabular source data; see `DATA_AUDIT.md`.
-- `Referencias/*.pdf`: reference documents.
-- `Resultados/siting-results.csv`: prior allocation output.
-- `Resultados/siting-comparison.png`: prior comparison figure.
+- `Datos/*.zip`: observed spatial source layers available in this workspace.
+- `Resultados/siting-results.csv`: current allocation output.
+- `Resultados/siting-comparison.png`: current comparison figure.
+- `outputs/metrics/*`: STGNN metrics, travel-time matrix, ablation metrics, sensitivity metrics, and manifests.
+- `outputs/tables/*`: paper-ready result tables.
+- `outputs/allocations/*`: allocation-level ablation and sensitivity outputs.
+- `outputs/models/stgnn_best.pt`: best synthetic STGNN checkpoint.
+- `outputs/synthetic/*`: synthetic temporal traffic dataset, metadata, and adjacency.
 
-### Missing reproducibility files
+### Documentation
 
-- No modular `src/` package.
-- No tests.
+- `README.md`: execution and scientific-status guide.
+- `DATA_AUDIT.md`: data provenance.
+- `MANUSCRIPT_RECONCILIATION.md`: manuscript-code consistency notes.
+- `PAPER_REVISION_GUIDE.md`: concrete manuscript edits by section, table, and figure.
+- `EXPERIMENT_REPORT.md`: consolidated experiment report.
+- `SYNTHETIC_EXPERIMENT_REPORT.md`: synthetic STGNN experiment details.
+- `ABLATION_REPORT.md`: ablation study report.
+- `SENSITIVITY_REPORT.md`: sensitivity study report.
+- `results_analysis.md`: current result interpretation.
 
-### Initial reproducibility files now present
-
-- `requirements.txt`.
-- `config.yaml`.
-- `run_pipeline.py`.
-- `outputs/tables/table2_results.csv`.
-- `outputs/tables/table2_results.md`.
-- `outputs/tables/table2_results.tex`.
-
-## Existing Implementation Status
+## Implementation Status
 
 | Capability | Current status | Evidence / notes |
 |---|---|---|
-| Real GCN | Present | `src/stgnn/model.py` implements normalized dense graph convolution. |
-| Real GRU | Present | `src/stgnn/model.py` uses `torch.nn.GRU` over node embedding sequences. |
-| STGNN training | Implemented, data-gated | `src/stgnn/train.py` trains when empirical temporal traffic data exist; current repository data are still missing. |
-| Train/validation/test split | Implemented, data-gated | Chronological split exists in `src/stgnn/traffic_dataset.py`. |
-| Loss optimization | Implemented, data-gated | Adam + MSE training loop exists in `src/stgnn/train.py`. |
-| MAE/RMSE calculation | Implemented, data-gated | Held-out test MAE/RMSE are saved only after supervised training. |
-| Checkpoint save/load | Implemented | Best model checkpoint is saved to `outputs/models/stgnn_best.pt` after training. |
-| MILP formulation | Present but simplified | PuLP binary assignment model exists. |
-| GIS-AHP baseline | Partial/mislabeled | Current baseline is a weighted score, not a documented AHP pairwise process. |
-| Abstract/Euclidean MILP | Present but incomplete | Uses Euclidean distances but lacks the same hazard/water constraints as proposed. |
-| Network MILP ablation | Missing | There is no fair static network MILP without dynamic factor. |
-| Sensitivity analysis | Missing | No automated +/- weight perturbation runs. |
-| Environmental constraints | Partial/synthetic | Proposed model excludes generated fault/flood/water proxies; baselines are not constraint-equivalent. |
-| CFE capacity aggregation | Present in proposed model | Aggregates load by nearest generated substation; data are synthetic assumptions. |
-| Worker commute optimization | Missing | Commute is evaluated after allocation, not included in objective. |
-| Relative paths | Partially fixed | `simulate_siting.py` now resolves key paths relative to the script directory. |
-| Hardcoded Table 2 values | Removed from executable path | Metrics are now exported from evaluated assignments. Older narrative files still require manuscript reconciliation. |
+| Real GCN | Implemented | `src/stgnn/model.py` implements normalized graph convolution. |
+| Real GRU | Implemented | `src/stgnn/model.py` uses `torch.nn.GRU` over temporal node embeddings. |
+| STGNN training | Implemented | `src/stgnn/train.py` trains/evaluates with chronological splits. |
+| MAE/RMSE calculation | Implemented | Test metrics are exported to `outputs/metrics/stgnn_test_metrics.json`. |
+| Checkpoint save/load | Implemented | Best checkpoint is saved as `outputs/models/stgnn_best.pt`. |
+| Synthetic traffic POC | Implemented | `outputs/synthetic/synthetic_traffic.csv` and adjacency are produced. |
+| MILP formulation | Implemented | PuLP binary assignment model with capacity, hazard, water, and commute terms. |
+| Profile 3 commute objective | Implemented | `optimization.delta_worker_commute_profile3` is consumed by the MILP. |
+| Table 2 exports | Implemented | CSV, Markdown, and LaTeX exports are produced under `outputs/tables/`. |
+| Fair ablation | Implemented | Euclidean, Network, and Synthetic-STGNN variants share constraints. |
+| Sensitivity analysis | Implemented | Weight perturbations are exported under `outputs/metrics/` and `outputs/tables/`. |
+| Reproducibility wrapper | Implemented | `run_pipeline.py --config config.yaml` runs the complete workflow. |
 
-## Manuscript-Code Inconsistencies
+## Scientific Boundaries
 
-| Manuscript claim / README claim | Current implementation | Status | Required action |
-|---|---|---|---|
-| Hybrid STGNN + MILP model is implemented | MILP exists; GCN-GRU implementation now exists but is not integrated into MILP coefficients without traffic data | Partially addressed | Add empirical temporal traffic data and connect inference to travel-time matrix |
-| MAE 1.84 min / RMSE 2.51 min | Metrics are implemented but not generated because no empirical traffic data exist | Unsupported | Add temporal traffic data and rerun training |
-| 50 candidate vacant industrial parcels | 50 road nodes are generated randomly near zone centers | Synthetic | Replace with parcel data or label synthetic |
-| CFE/JMAS utility nodes from real data | Nodes are generated from zone centers | Synthetic assumption | Use real CFE/JMAS data or disclose scenario assumptions |
-| Geological/flood/water constraints from real hazards | Hazards are hardcoded geometric proxies | Synthetic | Use official layers or disclose synthetic stress test |
-| Table 2 generated by code | Now generated from evaluated assignments | Partially addressed | Continue replacing stale manuscript text with generated outputs |
-| Profile 3 optimizes commute | Commute is only post-hoc | Inconsistent | Add commute coefficient for labor-intensive projects |
-| Baselines provide fair ablation | Baselines do not share all constraints | Incomplete | Add Euclidean MILP, Network MILP, STGNN-MILP with comparable constraints |
-| Reproducible one-command pipeline | `python run_pipeline.py --config config.yaml` runs STGNN data check and MILP simulation | Partially addressed | Add run manifest, tests in CI, and full modular orchestration |
+| Claim area | Current evidence | Manuscript wording required |
+|---|---|---|
+| Traffic forecasting | Real GCN+GRU trained on synthetic observations | Controlled synthetic method validation, not empirical traffic validation. |
+| CFE/JMAS capacity | Synthetic infrastructure proxies | Scenario assumptions unless official capacity data are added. |
+| Candidate sites | Synthetic road-snapped candidate nodes | Synthetic candidate parcels/plots unless cadastral parcel data are added. |
+| Hazard and water constraints | Synthetic stress-test geometries | Synthetic environmental exclusions unless official layers are added. |
+| Profile 3 commute | Included in objective as a proxy term | Commute-aware proxy optimization, not observed worker commute optimization. |
+| Table 2 | Produced from executable model outputs | Replace all old manuscript numbers with `outputs/tables/table2_results.*`. |
 
-## Priority Findings
+## Remaining Highest-Value Work
 
-1. Scientific integrity issue: paper-like result values were hardcoded after model evaluation.
-2. Data gap: a real STGNN implementation now exists, but no temporal traffic target data were found.
-3. Data provenance issue: several variables described as infrastructure or hazard data are generated assumptions.
-4. Experimental design issue: baselines are not yet a fair ablation because constraints differ.
-5. Reproducibility issue: dependency/config/wrapper now exist, but there is still no modular pipeline, tests, or run manifest.
+1. Replace synthetic temporal traffic with observed sensor or probe-speed time series.
+2. Replace synthetic CFE/JMAS capacities with official infrastructure-capacity data.
+3. Replace generated candidate points with cadastral or industrial-vacancy parcel data.
+4. Replace synthetic hazard/water geometries with official flood, fault, aquifer, and water-stress layers.
+5. Add a CI workflow after the GitHub repository layout is finalized.
