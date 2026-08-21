@@ -13,7 +13,18 @@ scenario_status:
   cfe_substations: "synthetic_assumption"
   jmas_outlets: "synthetic_assumption"
   hazards: "synthetic_assumption"
-  traffic: "synthetic_bridge_factors_not_stgnn"
+  traffic: "stgnn_training_requires_empirical_temporal_traffic_data"
+
+stgnn:
+  window: 12
+  gcn_hidden: 32
+  gru_hidden: 64
+  gru_layers: 1
+  learning_rate: 0.001
+  batch_size: 64
+  weight_decay: 0.00001
+  epochs: 200
+  early_stopping_patience: 20
 
 optimization:
   solver: "CBC"

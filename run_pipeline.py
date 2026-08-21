@@ -1,9 +1,4 @@
-"""One-command entry point for the current POC pipeline.
-
-The current implementation delegates to the legacy simulator after documenting
-the config path. Future stages should add data audit, STGNN training, ablation,
-sensitivity, and report generation here.
-"""
+"""One-command entry point for the current POC pipeline."""
 
 from __future__ import annotations
 
@@ -11,6 +6,7 @@ import argparse
 from pathlib import Path
 
 from simulate_siting import main as run_siting_simulation
+from src.stgnn.train import train_from_repository_data
 
 
 def parse_args() -> argparse.Namespace:
@@ -29,6 +25,8 @@ def main() -> None:
     if not config_path.exists():
         raise FileNotFoundError(f"Config file not found: {config_path}")
     print(f"Using config: {config_path.resolve()}")
+    stgnn_result = train_from_repository_data(config_path, Path("Datos"), Path("outputs"))
+    print(f"STGNN stage: {stgnn_result['status']}")
     run_siting_simulation()
 
 

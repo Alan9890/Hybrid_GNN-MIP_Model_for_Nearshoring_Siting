@@ -2,7 +2,7 @@
 
 A current proof of concept for industrial facility siting in Ciudad Juárez, Chihuahua, Mexico.
 
-Scientific status: this repository does **not yet** contain a trained Spatio-Temporal Graph Neural Network (STGNN). The executable model is currently a MILP-based simulator over an observed road graph, with synthetic scenario assumptions documented in `DATA_AUDIT.md` and `REPOSITORY_AUDIT.md`.
+Scientific status: this repository now contains a real PyTorch GCN+GRU implementation under `src/stgnn/`, plus chronological training/evaluation code. Empirical STGNN training is currently skipped because the repository does not yet include temporal traffic observations with timestamp, road segment, and speed/travel-time targets. The executable siting model remains a MILP-based simulator over an observed road graph, with synthetic scenario assumptions documented in `DATA_AUDIT.md` and `REPOSITORY_AUDIT.md`.
 
 ---
 
@@ -12,7 +12,7 @@ Accelerated nearshoring along the Mexico-US border has led to spatial saturation
 
 The current POC addresses this by:
 1.  **Constructing a non-Euclidean infrastructure graph** of Ciudad Juárez using real major road networks.
-2.  **Using synthetic bridge congestion factors** towards international ports of entry (Zaragoza, Américas, Jerónimo-Santa Teresa). These are not learned STGNN outputs yet.
+2.  **Providing a data-gated STGNN stage** that trains a real GCN+GRU when empirical traffic data are available. The current MILP still uses synthetic bridge congestion factors because those empirical traffic data are not present yet.
 3.  **Formulating a Mixed-Integer Linear Programming (MILP)** optimization solver that accounts for:
     *   Synthetic CFE substation capacity constraints (kVA).
     *   Synthetic JMAS sewer outlet proximity.
@@ -77,7 +77,13 @@ pip install geopandas shapely pulp networkx scipy matplotlib pyproj
 
 ### Running the Simulation
 
-Execute the Python pipeline to load the datasets, run the shortest path routing, solve the MILP optimization models, and export the dashboard data:
+Execute the Python pipeline to run the STGNN data check, load the GIS datasets, run shortest path routing, solve the MILP optimization models, and export the dashboard data:
+
+```bash
+python run_pipeline.py --config config.yaml
+```
+
+You can also run the legacy simulator directly:
 
 ```bash
 python simulate_siting.py

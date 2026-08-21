@@ -16,10 +16,12 @@
 
 ## Priority 3: STGNN
 
-- Implement a real PyTorch GCN-GRU module with deterministic seed support.
-- Add a traffic dataset loader that searches for temporal traffic fields.
-- If empirical temporal data are absent, stop empirical training with a clear message and optionally run a labeled synthetic experiment.
-- Save feature schema, training history, checkpoint, and MAE/RMSE only when a supervised test set exists.
+- [x] Implement a real PyTorch GCN-GRU module with deterministic seed support.
+- [x] Add a traffic dataset loader that searches for temporal traffic fields.
+- [x] If empirical temporal data are absent, stop empirical training with a clear message.
+- [x] Save feature schema, training history, checkpoint, and MAE/RMSE only when a supervised test set exists.
+- [ ] Replace placeholder identity adjacency in training with the road graph adjacency when temporal road-segment data are available.
+- [ ] Connect STGNN inference to the optimizer's travel-time matrix.
 
 ## Priority 4: MILP Correctness
 
@@ -40,4 +42,3 @@
 - Compare generated outputs with the manuscript values.
 - Update `MANUSCRIPT_RECONCILIATION.md` whenever the code produces values that differ from the current paper.
 - Keep README claims limited to what the code and data actually support.
-

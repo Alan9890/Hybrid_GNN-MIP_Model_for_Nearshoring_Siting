@@ -1,0 +1,6 @@
+{
+  "status": "skipped_missing_empirical_traffic_data",
+  "reason": "No CSV in the data directory contains timestamp, road segment id, and speed/travel-time target columns required for supervised STGNN training.",
+  "data_dir": "C:\\Users\\alann\\Desktop\\MIAAD\\MICAI_2026\\POC_SIMULATION\\Datos",
+  "model_implemented": "src.stgnn.model.GCNGRU"
+}

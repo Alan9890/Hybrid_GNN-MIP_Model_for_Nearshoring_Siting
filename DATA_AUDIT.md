@@ -38,4 +38,4 @@ Note: GeoPandas/pyogrio reports invalid winding order and mixed polygon geometry
 
 ## Data Gaps Blocking Empirical STGNN Claims
 
-No repository file currently provides a supervised temporal traffic table with fields like `timestamp`, `road_segment_id`, `speed`, or `travel_time`. A real GCN-GRU can be implemented, but it cannot produce empirical MAE/RMSE without temporal targets. The correct behavior is to fail the empirical training stage with a clear message or run an explicitly labeled synthetic experiment.
+No repository file currently provides a supervised temporal traffic table with fields like `timestamp`, `road_segment_id`, `speed`, or `travel_time`. A real GCN-GRU implementation now exists under `src/stgnn/`, but it cannot produce empirical MAE/RMSE without temporal targets. The current training stage writes `outputs/metrics/stgnn_status.json` with a skipped status instead of fabricating traffic evidence.

@@ -20,7 +20,7 @@ Paper:
 The manuscript mentions STGNN MAE/RMSE values.
 
 Repository result:
-No trainable GCN-GRU, temporal traffic dataset, chronological split, or held-out evaluation currently exists.
+A trainable GCN-GRU implementation, chronological split, checkpointing, and held-out MAE/RMSE code now exist. However, no empirical temporal traffic dataset currently exists in the repository, so the training stage is skipped and no empirical MAE/RMSE should be reported.
 
 Action:
 Remove the empirical MAE/RMSE claim until temporal traffic data and training are implemented, or label any future synthetic experiment explicitly.
@@ -41,4 +41,3 @@ Either replace these with empirical layers or revise the manuscript to describe 
 
 Reason:
 The available repository data do not support those empirical claims yet.
-

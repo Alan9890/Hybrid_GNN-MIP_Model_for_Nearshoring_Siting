@@ -4,6 +4,9 @@ networkx
 numpy
 pandas
 pulp
+pytest
+pyyaml
 pyproj
 scipy
 shapely
+torch
